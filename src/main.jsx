@@ -1,0 +1,429 @@
+import React, { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, Clock3, Hand, Heart,
+  Instagram, MapPin, Menu, MessageCircle, Phone, Play, Plus, ShieldCheck, Sparkles, Star, X, CalendarCheck
+} from 'lucide-react';
+import Tooth3D from './Tooth3D.jsx';
+import './styles.css';
+
+// Address, hours and map pin from the clinic's Practo listing.
+const CLINIC = {
+  name: 'United Smiles Family Dentistry',
+  city: 'Kochi, Kerala',
+  address: '67/3596-A, Highcourt Road, Shanmugham Road P.O., Opp. High Court of Kerala, Ernakulam',
+  phone: '+91 00000 00000', // TODO: clinic phone number
+  whatsapp: '910000000000', // TODO: WhatsApp number — country code + number, digits only
+  hours: 'Mon – Sat · 10:00 AM – 1:30 PM, 2:00 – 7:00 PM',
+  booking: 'https://www.practo.com/ernakulam/clinic/dr-annie-s-united-smiles-family-dentistry-aluva',
+  instagram: 'https://www.instagram.com/unitedsmilesfamilydentist/',
+  igHandle: 'unitedsmilesfamilydentist',
+  maps: 'https://share.google/Z5Qi2lvWD4hViJBU2',
+  mapEmbed: 'https://www.google.com/maps?q=9.985011,76.274786&z=16&output=embed',
+};
+const tel = `tel:${CLINIC.phone.replace(/\s/g, '')}`;
+const wa = (text = '') => `https://wa.me/${CLINIC.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+const ext = { target: '_blank', rel: 'noreferrer' };
+
+const LOGO = `${import.meta.env.BASE_URL}logo.jpg`; // BASE_URL keeps it working under the GitHub Pages sub-path
+const img = (id, w = 900) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=75`;
+const SAMPLE_VIDEO = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'; // TODO: replace with clinic reels
+
+const treatments = [
+  { title: 'Smile Design', tag: 'Digital planning', desc: 'Your new smile, previewed digitally and shaped around your face, lips and personality.', img: img('1667133295315-820bb6481730') },
+  { title: 'Clear Aligners', tag: 'Invisible straightening', desc: 'Discreet, removable aligners that move your teeth gently — no wires, no fuss.', img: img('1609840114035-3c981b782dfe') },
+  { title: 'Teeth Whitening', tag: 'A natural glow', desc: 'Safe, in-clinic whitening for a brighter smile without the sensitivity worries.', img: img('1494790108377-be9c29b29330') },
+  { title: 'Dental Implants', tag: 'Permanent & natural', desc: 'Replace missing teeth with implants that look, feel and work like your own.', img: img('1593022356769-11f762e25ed9') },
+  { title: 'Root Canal Care', tag: 'Pain-free & precise', desc: 'Modern, comfortable root canal treatment that saves your natural tooth.', img: img('1606265752439-1f18756aa5fc') },
+  { title: 'Kids & Family', tag: 'Every generation', desc: 'Warm, patient care for little ones, parents and grandparents alike.', img: img('1609220136736-443140cffec6') },
+  { title: 'Digital Diagnosis', tag: 'See it clearly', desc: 'Digital X-rays and scans for accurate, low-radiation diagnosis and planning.', img: img('1588776814546-1ffcf47267a5') },
+];
+
+// TODO: replace with the real visiting doctors' names, photos, specialities and days.
+const visitingDoctors = [
+  { name: 'Dr. [Name]', role: 'Orthodontist', days: 'Every Tuesday', img: img('1612349317150-e413f6a5b16d', 600) },
+  { name: 'Dr. [Name]', role: 'Periodontist', days: 'Alternate Thursdays', img: img('1559839734-2b71ea197ec2', 600) },
+  { name: 'Dr. [Name]', role: 'Oral & Maxillofacial Surgeon', days: 'By appointment', img: img('1622253692010-333f2da6031d', 600) },
+  { name: 'Dr. [Name]', role: 'Endodontist', days: 'Every Saturday', img: img('1622902046580-2b47f47f5471', 600) },
+  { name: 'Dr. [Name]', role: 'Paediatric Dentist', days: 'Every Friday', img: img('1631217868264-e5b90bb7e133', 600) },
+];
+
+const gallery = [
+  '1629909613638-0e4a1fad8f81', '1629909613654-28e377c37b09', '1629909615184-74f495363b67', '1598256989800-fe5f95da9787',
+  '1616391182219-e080b4d1043a', '1643660527072-9c702932f606', '1609207825181-52d3214556dd', '1519494026892-80bbd2d6fd0d',
+  '1607613009820-a29f7bb81c04', '1606811841689-23dfddce3e95',
+];
+
+const reels = [
+  { img: '1607613009820-a29f7bb81c04', caption: 'Brushing right, the easy way 🪥', views: '12.4K' },
+  { img: '1600170311833-c2cf5280ce49', caption: 'Inside a digital smile scan ✨', views: '8.1K' },
+  { img: '1609840114035-3c981b782dfe', caption: 'Aligner day! Here’s what to expect', views: '15.7K' },
+  { img: '1468493858157-0da44aaf1d13', caption: 'Retainers, explained in 30 seconds', views: '6.3K' },
+  { img: '1606265752439-1f18756aa5fc', caption: 'What happens at a gentle check-up', views: '9.9K' },
+  { img: '1667133295315-820bb6481730', caption: 'Smile makeover reveal 😁', views: '21.2K' },
+];
+
+// TODO: SAMPLE reviews for layout only. Replace with real Google reviews (or a reviews widget) before publishing.
+const reviews = [
+  { name: 'Anjali Nair', when: '2 weeks ago', text: 'Dr. Annie explained every step before starting. My root canal was completely painless and the clinic is spotless. Highly recommend!', color: '#0e7c6b' },
+  { name: 'Rahul Menon', when: '1 month ago', text: 'Got my aligners done here. Friendly staff, on-time appointments and genuinely caring doctors. Best dental clinic in Kochi.', color: '#b8792f' },
+  { name: 'Fathima Rasheed', when: '3 weeks ago', text: 'My kids actually look forward to their dental visits now! The team is so patient and gentle with children.', color: '#7a4fa3' },
+  { name: 'George Thomas', when: '2 months ago', text: 'Had two implants placed. Very professional, modern equipment and clear pricing upfront. Very happy with the result.', color: '#2d6cb5' },
+  { name: 'Lakshmi Pillai', when: '5 days ago', text: 'Whitening results were beyond what I expected. Comfortable, quick and the staff made me feel at home.', color: '#c2445c' },
+  { name: 'Arjun Varghese', when: '1 month ago', text: 'Clean, calm and welcoming. Dr. Annie and her team took the fear out of dentistry for me.', color: '#4b7d2e' },
+];
+
+const NAV = [['About', 'about'], ['Doctors', 'doctors'], ['Treatments', 'treatments'], ['Gallery', 'gallery'], ['Reviews', 'reviews'], ['Contact', 'contact']];
+const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
+function useWidth() {
+  const [w, setW] = useState(window.innerWidth);
+  useEffect(() => { const on = () => setW(window.innerWidth); window.addEventListener('resize', on); return () => window.removeEventListener('resize', on); }, []);
+  return w;
+}
+
+const Reveal = ({ children, className = '', delay = 0 }) => (
+  <motion.div className={className} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .7, delay, ease: [.22, 1, .36, 1] }}>{children}</motion.div>
+);
+
+const Eyebrow = ({ children }) => <div className="eyebrow"><span className="eyebrow-line" />{children}</div>;
+
+const Stars = ({ size = 16 }) => <span className="stars" aria-label="5 out of 5 stars">{[0, 1, 2, 3, 4].map(i => <Star key={i} size={size} fill="currentColor" strokeWidth={0} />)}</span>;
+
+const GoogleG = ({ size = 22 }) => (
+  <svg width={size} height={size} viewBox="0 0 48 48" aria-label="Google"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z" /><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" /><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" /><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.3-.4-3.5z" /></svg>
+);
+
+function Header() {
+  const [open, setOpen] = useState(false);
+  const go = id => { scrollTo(id); setOpen(false); };
+  return <>
+    <header className="nav glass">
+      <a className="brand" href="#top" aria-label={`${CLINIC.name} home`}>
+        <img className="brand-mark" src={LOGO} alt="" />
+        <span>United Smiles<small>FAMILY DENTISTRY · KOCHI</small></span>
+      </a>
+      <nav className="desktop-nav">{NAV.map(([label, id]) => <button key={id} onClick={() => go(id)}>{label}</button>)}</nav>
+      <a className="btn btn-primary nav-cta" href={CLINIC.booking} {...ext}>Book a visit <ArrowUpRight size={18} /></a>
+      <button className="menu-toggle glass" onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>{open ? <X /> : <Menu />}</button>
+    </header>
+    <AnimatePresence>{open && <motion.div className="mobile-menu glass" initial={{ opacity: 0, y: -10, scale: .97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: .97 }}>
+      {NAV.map(([label, id]) => <button key={id} onClick={() => go(id)}>{label}<ArrowUpRight size={18} /></button>)}
+    </motion.div>}</AnimatePresence>
+  </>;
+}
+
+function Hero() {
+  return <section className="hero section-pad" id="top">
+    <div className="blob blob-a" /><div className="blob blob-b" />
+    <div className="hero-copy">
+      <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .1 }}><Eyebrow>Family dental care in {CLINIC.city}</Eyebrow></motion.div>
+      <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .8 }}>Healthy smiles,<br /><em>gently</em> crafted.</motion.h1>
+      <motion.p className="lead" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35 }}>Led by Dr. Annie, United Smiles brings together time-honoured care and modern dentistry — so every visit feels calm, clear and personal.</motion.p>
+      <motion.div className="hero-actions" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .5 }}>
+        <a className="btn btn-primary" href={CLINIC.booking} {...ext}>Book an appointment <ArrowUpRight size={19} /></a>
+        <a className="btn btn-glass glass" href={wa()} {...ext}><MessageCircle size={19} /> WhatsApp us</a>
+      </motion.div>
+      <div className="hero-proof">
+        <GoogleG size={26} />
+        <div><Stars /><small>Loved by families across Kochi</small></div>
+      </div>
+    </div>
+    <div className="hero-art">
+      <div className="tooth-halo" />
+      <Tooth3D />
+      <div className="float-chip glass chip-a"><ShieldCheck size={20} /> Preventive protection</div>
+      <div className="float-chip glass chip-b"><Sparkles size={20} /> Modern & painless</div>
+      <div className="drag-hint"><Hand size={16} /> Drag to rotate</div>
+    </div>
+  </section>;
+}
+
+function About() {
+  return <section className="about section-pad" id="about">
+    <div className="kasavu" />
+    <div className="about-grid">
+      <Reveal className="about-media">
+        <div className="arch arch-main"><img src={img('1606811841689-23dfddce3e95', 1000)} alt="Dentist explaining treatment to a patient" loading="lazy" /></div>
+        <div className="arch-round"><img src={img('1629909615184-74f495363b67', 500)} alt="Clean, modern treatment room" loading="lazy" /></div>
+        <div className="about-badge glass"><Heart size={22} /><span><b>Gentle care</b><small>for every age</small></span></div>
+      </Reveal>
+      <div className="about-copy">
+        <Reveal><Eyebrow>About United Smiles</Eyebrow><h2>A dental home built on <em>trust</em> & tradition.</h2></Reveal>
+        <Reveal delay={.1}>
+          <p className="large">We believe great dentistry starts with listening. No rush, no judgement — just honest advice and gentle, precise care.</p>
+          <p>At United Smiles in Kochi, we combine the warmth of a family clinic with modern technology: digital X-rays, sterilisation you can trust and treatment plans explained in plain language.</p>
+          <ul className="ticks">{['Sterile, hygienic environment', 'Digital X-rays & diagnosis', 'Transparent treatment plans', 'Care for kids to grandparents'].map(t => <li key={t}><Check size={18} />{t}</li>)}</ul>
+        </Reveal>
+        <Reveal delay={.2} className="lead-doctor glass">
+          <div className="lead-photo"><img src={img('1594824476967-48c8b964273f', 400)} alt="Dr. Annie" loading="lazy" /></div>
+          <div>
+            <span className="tag">Chief Dental Surgeon</span>
+            <h3>Dr. Annie Mohan</h3>
+            <p>“Every smile carries a story. My job is to protect it, gently and for life.”</p>
+            <small>BDS · 28 years of experience</small>
+          </div>
+        </Reveal>
+      </div>
+    </div>
+  </section>;
+}
+
+function Doctors() {
+  return <section className="doctors section-pad" id="doctors">
+    <div className="doctors-head">
+      <Reveal><Eyebrow>Visiting specialists</Eyebrow><h2>Expert hands, <em>under one roof.</em></h2></Reveal>
+      <Reveal className="doctors-aside"><p>Alongside Dr. Annie, trusted specialists visit United Smiles regularly — so you get advanced care without leaving Kochi.</p></Reveal>
+    </div>
+    <div className="doctor-row">
+      {visitingDoctors.map((d, i) => <Reveal key={i} delay={i * .08} className={`doctor-card d${i}`}>
+        <div className="doctor-arch"><img src={d.img} alt={`${d.role} at United Smiles`} loading="lazy" /></div>
+        <div className="doctor-info glass">
+          <span className="tag">{d.role}</span>
+          <h3>{d.name}</h3>
+          <small><Clock3 size={14} /> {d.days}</small>
+        </div>
+      </Reveal>)}
+    </div>
+  </section>;
+}
+
+function Treatments() {
+  const n = treatments.length;
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const w = useWidth();
+  const rx = Math.min(w * .34, 440), rz = 260;
+  const go = d => setActive(a => (a + d + n) % n);
+
+  useEffect(() => {
+    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const t = setInterval(() => go(1), 4500);
+    return () => clearInterval(t);
+  }, [paused]);
+
+  return <section className="treatments section-pad" id="treatments">
+    <div className="treat-head">
+      <Reveal><Eyebrow>Our treatments</Eyebrow><h2>Care for every <em>kind of smile.</em></h2></Reveal>
+      <Reveal className="slider-controls">
+        <button className="glass" onClick={() => go(-1)} aria-label="Previous treatment"><ChevronLeft /></button>
+        <button className="glass" onClick={() => go(1)} aria-label="Next treatment"><ChevronRight /></button>
+      </Reveal>
+    </div>
+    <div className="carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <motion.div className="carousel-stage" drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={.12}
+        onDragStart={() => setPaused(true)}
+        onDragEnd={(e, { offset }) => { if (offset.x < -50) go(1); else if (offset.x > 50) go(-1); }}>
+        {treatments.map((t, i) => {
+          let off = ((i - active) % n + n) % n;
+          if (off > n / 2) off -= n;
+          const th = off * 2 * Math.PI / n, abs = Math.abs(off);
+          return <motion.article key={t.title} className={`t-card ${off === 0 ? 'front' : ''}`}
+            style={{ zIndex: 10 - abs }}
+            animate={{ x: Math.sin(th) * rx, z: (Math.cos(th) - 1) * rz, rotateY: Math.sin(th) * 24, scale: off === 0 ? 1 : .88, opacity: abs >= 3 ? 0 : 1, filter: `brightness(${1 - abs * .1})` }}
+            transition={{ type: 'spring', stiffness: 70, damping: 18 }}
+            onClick={() => off !== 0 && setActive(i)} aria-hidden={off !== 0}>
+            <div className="t-img"><img src={t.img} alt={t.title} loading="lazy" draggable="false" /><span className="t-no">0{i + 1}</span></div>
+            <div className="t-body">
+              <span className="tag">{t.tag}</span>
+              <h3>{t.title}</h3>
+              <p>{t.desc}</p>
+              <a className="t-link" tabIndex={off === 0 ? 0 : -1} href={CLINIC.booking} {...ext}>Book a consultation <ArrowRight size={17} /></a>
+            </div>
+          </motion.article>;
+        })}
+      </motion.div>
+    </div>
+    <div className="dots">{treatments.map((t, i) => <button key={t.title} className={i === active ? 'on' : ''} onClick={() => setActive(i)} aria-label={`Show ${t.title}`} />)}</div>
+  </section>;
+}
+
+function Gallery() {
+  const [more, setMore] = useState(false);
+  const shown = gallery.slice(0, 5), rest = gallery.slice(5);
+  return <section className="gallery section-pad" id="gallery">
+    <div className="kasavu" />
+    <div className="treat-head">
+      <Reveal><Eyebrow>Inside our clinic</Eyebrow><h2>A calm space, <em>made for you.</em></h2></Reveal>
+    </div>
+    <div className="collage">
+      {shown.map((id, i) => <Reveal key={id} delay={i * .05} className={`tile tile-${i}`}>
+        <img src={img(id, i === 0 ? 1100 : 700)} alt="United Smiles clinic" loading="lazy" />
+        {i === 4 && !more && <button className="tile-more glass" onClick={() => setMore(true)}><b>+{rest.length}</b>View more</button>}
+      </Reveal>)}
+    </div>
+    <AnimatePresence>{more && <motion.div className="collage-more" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+      {rest.map(id => <div key={id} className="tile"><img src={img(id, 700)} alt="United Smiles clinic" loading="lazy" /></div>)}
+    </motion.div>}</AnimatePresence>
+    {more && <div className="center"><button className="btn btn-glass glass" onClick={() => setMore(false)}>Show less</button></div>}
+  </section>;
+}
+
+function Reviews() {
+  const scroll = dir => document.getElementById('review-track')?.scrollBy({ left: dir * 380, behavior: 'smooth' });
+  return <section className="reviews section-pad" id="reviews">
+    <div className="treat-head">
+      <Reveal><Eyebrow>Patient reviews</Eyebrow><h2>Kind words from <em>our patients.</em></h2></Reveal>
+    </div>
+    <Reveal className="g-summary glass">
+      <GoogleG size={40} />
+      <div className="g-score"><b>4.9</b><Stars size={20} /><small>Based on Google reviews</small></div>
+      <div className="g-actions">
+        <button className="glass round" onClick={() => scroll(-1)} aria-label="Previous reviews"><ChevronLeft /></button>
+        <button className="glass round" onClick={() => scroll(1)} aria-label="Next reviews"><ChevronRight /></button>
+        <a className="btn btn-primary" href={CLINIC.maps} {...ext}>Write a review</a>
+      </div>
+    </Reveal>
+    <div className="review-track" id="review-track">
+      {reviews.map(r => <article className="g-card" key={r.name}>
+        <div className="g-head">
+          <span className="g-avatar" style={{ background: r.color }}>{r.name[0]}</span>
+          <div><b>{r.name}</b><small>{r.when}</small></div>
+          <GoogleG size={20} />
+        </div>
+        <Stars size={17} />
+        <p>{r.text}</p>
+      </article>)}
+    </div>
+  </section>;
+}
+
+function InstaFeed() {
+  const [playing, setPlaying] = useState(null);
+  useEffect(() => {
+    if (!playing) return;
+    const onKey = e => e.key === 'Escape' && setPlaying(null);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [playing]);
+
+  return <section className="insta section-pad" id="instagram">
+    <Reveal className="insta-copy">
+      <Eyebrow>On Instagram</Eyebrow>
+      <h2>Smile tips & <em>clinic moments.</em></h2>
+      <p>Quick tips, real smile stories and a peek behind the scenes. Tap any reel to watch.</p>
+      <a className="btn btn-glass glass" href={CLINIC.instagram} target="_blank" rel="noreferrer"><Instagram size={19} /> Follow @{CLINIC.igHandle}</a>
+    </Reveal>
+    <Reveal className="ig-feed glass" delay={.1}>
+      <div className="ig-profile">
+        <span className="ig-ring"><img src={LOGO} alt="" /></span>
+        <div className="ig-meta">
+          <b>{CLINIC.igHandle}</b>
+          <div className="ig-stats"><span><b>120</b> posts</span><span><b>4.8K</b> followers</span></div>
+          <small>Dental clinic · {CLINIC.city}</small>
+        </div>
+        <a className="ig-follow" href={CLINIC.instagram} target="_blank" rel="noreferrer">Follow</a>
+      </div>
+      <div className="ig-grid">
+        {reels.map(r => <button className="ig-tile" key={r.img} onClick={() => setPlaying(r)} aria-label={`Play reel: ${r.caption}`}>
+          <img src={img(r.img, 400)} alt="" loading="lazy" />
+          <span className="ig-play"><Play size={22} fill="currentColor" /></span>
+          <span className="ig-views"><Play size={12} fill="currentColor" /> {r.views}</span>
+        </button>)}
+      </div>
+    </Reveal>
+    <AnimatePresence>{playing && <motion.div className="modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setPlaying(null)} role="dialog" aria-modal="true" aria-label={playing.caption}>
+      <motion.div className="modal-card glass" initial={{ scale: .9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: .9, y: 20 }} onClick={e => e.stopPropagation()}>
+        <video src={SAMPLE_VIDEO} poster={img(playing.img, 600)} autoPlay controls playsInline loop />
+        <div className="modal-caption"><span className="ig-ring small"><img src={LOGO} alt="" /></span><div><b>{CLINIC.igHandle}</b><p>{playing.caption}</p></div></div>
+        <button className="modal-close glass round" onClick={() => setPlaying(null)} aria-label="Close video" autoFocus><X /></button>
+      </motion.div>
+    </motion.div>}</AnimatePresence>
+  </section>;
+}
+
+function Contact() {
+  const [sent, setSent] = useState(false);
+  return <section className="contact section-pad" id="contact">
+    <div className="blob blob-c" />
+    <div className="contact-left">
+      <Reveal>
+        <Eyebrow>Visit us</Eyebrow>
+        <h2>Let’s make you <em>smile more.</em></h2>
+        <p>Have a question or ready to book? Send us a note, call or WhatsApp — our team will help you find the right next step.</p>
+        <div className="contact-list">
+          <a className="glass" href={CLINIC.maps} {...ext}><MapPin size={20} /><p><small>FIND US · GET DIRECTIONS</small>{CLINIC.address}</p></a>
+          <div className="glass"><Clock3 size={20} /><p><small>OPENING HOURS</small>{CLINIC.hours}</p></div>
+          <a className="glass" href={tel}><Phone size={20} /><p><small>CALL</small>{CLINIC.phone}</p></a>
+        </div>
+      </Reveal>
+    </div>
+    <Reveal className="contact-right">
+      {/* Form sends the request to the clinic's WhatsApp; Practo is offered for instant online booking. */}
+      <form className="contact-form glass" onSubmit={e => {
+        e.preventDefault();
+        const f = Object.fromEntries(new FormData(e.currentTarget));
+        window.open(wa(`Hello United Smiles, I'd like an appointment.\nName: ${f.name}\nPhone: ${f.phone}\nTreatment: ${f.treatment || 'Not sure'}\n${f.message || ''}`), '_blank', 'noreferrer');
+        setSent(true);
+      }}>
+        {sent ? <div className="success"><span><Check size={26} /></span><h3>Thank you!</h3><p>Your request has opened in WhatsApp — just press send. We’ll get back to you shortly.</p><button type="button" className="t-link" onClick={() => setSent(false)}>Send another</button></div> : <>
+          <h3>Request an appointment</h3>
+          <div className="form-row">
+            <label>Your name<input name="name" required placeholder="Full name" autoComplete="name" /></label>
+            <label>Phone number<input name="phone" type="tel" required placeholder="+91" autoComplete="tel" /></label>
+          </div>
+          <label>Treatment<select name="treatment" defaultValue=""><option value="" disabled>Choose a treatment</option>{treatments.map(t => <option key={t.title}>{t.title}</option>)}<option>General check-up</option></select></label>
+          <label>Message<textarea name="message" rows="3" placeholder="Anything we should know?" /></label>
+          <div className="form-actions">
+            <button className="btn btn-primary" type="submit"><MessageCircle size={19} /> Send on WhatsApp</button>
+            <a className="btn btn-glass glass" href={CLINIC.booking} {...ext}><CalendarCheck size={19} /> Book on Practo</a>
+          </div>
+        </>}
+      </form>
+      <iframe className="map glass" title="United Smiles location map" loading="lazy" src={CLINIC.mapEmbed} />
+    </Reveal>
+  </section>;
+}
+
+function Footer() {
+  return <footer className="footer section-pad">
+    <div className="footer-panel glass">
+      <div className="footer-brand">
+        <a className="brand light" href="#top"><img className="brand-mark" src={LOGO} alt="" /><span>United Smiles<small>FAMILY DENTISTRY · KOCHI</small></span></a>
+        <p>Traditional care.<br />Modern smiles.</p>
+      </div>
+      <div className="footer-col"><span>EXPLORE</span>{NAV.map(([label, id]) => <button key={id} onClick={() => scrollTo(id)}>{label}</button>)}</div>
+      <div className="footer-col"><span>CONTACT</span>
+        <a href={tel}><Phone size={16} /> {CLINIC.phone}</a>
+        <a href={CLINIC.maps} {...ext}><MapPin size={16} /> {CLINIC.address}</a>
+      </div>
+      <div className="footer-col"><span>FOLLOW</span>
+        <a className="btn btn-glass glass" href={CLINIC.instagram} target="_blank" rel="noreferrer"><Instagram size={18} /> Instagram</a>
+        <a className="btn btn-glass glass" href={wa()} {...ext}><MessageCircle size={18} /> WhatsApp</a>
+      </div>
+    </div>
+    <div className="footer-bottom"><span>© {new Date().getFullYear()} United Smiles Family Dentistry, Kochi.</span><button onClick={() => scrollTo('top')}>Back to top ↑</button></div>
+  </footer>;
+}
+
+function QuickActions() {
+  const [open, setOpen] = useState(false);
+  const actions = [
+    { label: 'Call us', href: tel, icon: <Phone size={22} />, cls: 'qa-call' },
+    { label: 'Book appointment', href: CLINIC.booking, icon: <CalendarCheck size={22} />, cls: 'qa-book', ...ext },
+    { label: 'WhatsApp', href: wa('Hello United Smiles, I have a question.'), icon: <MessageCircle size={22} />, cls: 'qa-wa', ...ext },
+  ];
+  return <div className="quick-actions">
+    <AnimatePresence>{open && actions.map(({ label, icon, cls, ...link }, i) =>
+      <motion.a key={label} className={`qa-item ${cls}`} {...link} aria-label={label}
+        initial={{ opacity: 0, y: 20, scale: .6 }} animate={{ opacity: 1, y: 0, scale: 1, transition: { delay: i * .05 } }} exit={{ opacity: 0, y: 20, scale: .6, transition: { delay: (2 - i) * .04 } }}>
+        <span className="qa-label glass">{label}</span><span className="qa-icon">{icon}</span>
+      </motion.a>)}
+    </AnimatePresence>
+    <button className="qa-toggle" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? 'Close quick actions' : 'Open quick actions'}>
+      <motion.span animate={{ rotate: open ? 45 : 0 }} style={{ display: 'grid' }}><Plus size={28} /></motion.span>
+    </button>
+  </div>;
+}
+
+function App() {
+  return <div className="site">
+    <Header />
+    <main><Hero /><About /><Doctors /><Treatments /><Gallery /><Reviews /><InstaFeed /><Contact /></main>
+    <Footer />
+    <QuickActions />
+  </div>;
+}
+
+createRoot(document.getElementById('root')).render(<App />);
