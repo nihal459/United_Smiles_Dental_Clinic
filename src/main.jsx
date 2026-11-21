@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, Clock3, Hand, Heart,
+  ArrowRight, ArrowUpRight, Award, Check, ChevronLeft, ChevronRight, ClipboardList, Clock3, Hand, Heart, HeartHandshake, Users,
   Instagram, MapPin, Menu, MessageCircle, Phone, Play, Plus, ShieldCheck, Sparkles, Star, X, CalendarCheck
 } from 'lucide-react';
 import Tooth3D from './Tooth3D.jsx';
@@ -31,22 +31,29 @@ const img = (id, w = 900) => `https://images.unsplash.com/photo-${id}?auto=forma
 const SAMPLE_VIDEO = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'; // TODO: replace with clinic reels
 
 const treatments = [
-  { title: 'Smile Design', tag: 'Digital planning', desc: 'Your new smile, previewed digitally and shaped around your face, lips and personality.', img: img('1667133295315-820bb6481730') },
-  { title: 'Clear Aligners', tag: 'Invisible straightening', desc: 'Discreet, removable aligners that move your teeth gently — no wires, no fuss.', img: img('1609840114035-3c981b782dfe') },
-  { title: 'Teeth Whitening', tag: 'A natural glow', desc: 'Safe, in-clinic whitening for a brighter smile without the sensitivity worries.', img: img('1494790108377-be9c29b29330') },
-  { title: 'Dental Implants', tag: 'Permanent & natural', desc: 'Replace missing teeth with implants that look, feel and work like your own.', img: img('1593022356769-11f762e25ed9') },
-  { title: 'Root Canal Care', tag: 'Pain-free & precise', desc: 'Modern, comfortable root canal treatment that saves your natural tooth.', img: img('1606265752439-1f18756aa5fc') },
-  { title: 'Kids & Family', tag: 'Every generation', desc: 'Warm, patient care for little ones, parents and grandparents alike.', img: img('1609220136736-443140cffec6') },
-  { title: 'Digital Diagnosis', tag: 'See it clearly', desc: 'Digital X-rays and scans for accurate, low-radiation diagnosis and planning.', img: img('1588776814546-1ffcf47267a5') },
+  { title: 'Orthodontics & Braces', tag: 'Beautifully aligned', desc: 'Transforming crooked, crowded and misaligned teeth into healthier, beautifully aligned smiles with personalised orthodontic treatment.', img: img('1468493858157-0da44aaf1d13') },
+  { title: 'Invisalign & Clear Aligners', tag: 'Discreet straightening', desc: 'A modern approach to teeth straightening with custom-made, removable and discreet clear aligners.', img: img('1609840114035-3c981b782dfe') },
+  { title: 'Dental Implants', tag: 'Natural-looking smiles', desc: 'Restore missing teeth with dental implant solutions designed to bring back function, comfort and natural-looking smiles.', img: img('1593022356769-11f762e25ed9') },
+  { title: 'Cosmetic Dentistry & Smile Designing', tag: 'Enhance your smile', desc: 'Enhance your smile with treatments that improve the appearance, shape and colour of your teeth.', img: img('1494790108377-be9c29b29330') },
+  { title: 'Root Canal Treatment', tag: 'Save your natural tooth', desc: 'Helping preserve natural teeth by treating infection and relieving dental pain.', img: img('1606811971618-4486d14f3f99') },
+  { title: 'Family & Preventive Dentistry', tag: 'For every generation', desc: 'Gentle dental care, regular check-ups and preventive treatments for children and adults.', img: img('1609220136736-443140cffec6') },
 ];
 
-// TODO: replace with the real visiting doctors' names, photos, specialities and days.
-const visitingDoctors = [
-  { name: 'Dr. [Name]', role: 'Orthodontist', days: 'Every Tuesday', img: img('1612349317150-e413f6a5b16d', 600) },
-  { name: 'Dr. [Name]', role: 'Periodontist', days: 'Alternate Thursdays', img: img('1559839734-2b71ea197ec2', 600) },
-  { name: 'Dr. [Name]', role: 'Oral & Maxillofacial Surgeon', days: 'By appointment', img: img('1622253692010-333f2da6031d', 600) },
-  { name: 'Dr. [Name]', role: 'Endodontist', days: 'Every Saturday', img: img('1622902046580-2b47f47f5471', 600) },
-  { name: 'Dr. [Name]', role: 'Paediatric Dentist', days: 'Every Friday', img: img('1631217868264-e5b90bb7e133', 600) },
+const whyUs = [
+  { icon: Award, title: '25 Years of Excellence', text: 'Guided by the expertise and clinical experience of our chief dentist.' },
+  { icon: ShieldCheck, title: 'Trusted Since 2008', text: 'A longstanding commitment to caring for smiles and building lasting relationships.' },
+  { icon: HeartHandshake, title: 'Patient-Centred Care', text: 'Every treatment begins with understanding your needs and expectations.' },
+  { icon: Sparkles, title: 'Modern Treatment Options', text: 'Advanced dental solutions for a wide range of dental concerns.' },
+  { icon: Users, title: 'Family-Friendly Environment', text: 'Welcoming dental care for every generation.' },
+  { icon: ClipboardList, title: 'Personalised Treatment Plans', text: 'Tailored care designed around every individual’s smile.' },
+];
+
+const doctorPhoto = file => `${import.meta.env.BASE_URL}doctors/${file}`;
+// Non-breaking spaces in names keep initials on one line.
+const doctors = [
+  { name: 'Dr. Annie Mohan', role: 'Chief Dental Surgeon', degree: 'BDS', note: '25+ years of experience', img: doctorPhoto('annie-mohan.jpg') },
+  { name: 'Dr. Anupama P P', role: 'Orthodontist', degree: 'MDS', note: 'Visiting · By appointment', img: doctorPhoto('anupama-pp.jpg') },
+  { name: 'Dr. Basil M Jacob', role: 'Oral Surgeon', degree: 'MDS', note: 'Visiting · By appointment', img: doctorPhoto('basil-m-jacob.jpg') },
 ];
 
 const gallery = [
@@ -118,9 +125,9 @@ function Hero() {
   return <section className="hero section-pad" id="top">
     <div className="blob blob-a" /><div className="blob blob-b" />
     <div className="hero-copy">
-      <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .1 }}><Eyebrow>Family dental care in {CLINIC.city}</Eyebrow></motion.div>
-      <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .8 }}>Healthy smiles,<br /><em>gently</em> crafted.</motion.h1>
-      <motion.p className="lead" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35 }}>Led by Dr. Annie, United Smiles brings together time-honoured care and modern dentistry — so every visit feels calm, clear and personal.</motion.p>
+      <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .1 }}><Eyebrow>Trusted dental care since 2008</Eyebrow></motion.div>
+      <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .8 }}>Every smile has a story.<br /><em>Let yours shine.</em></motion.h1>
+      <motion.p className="lead" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35 }}>From routine check-ups to advanced smile transformations, United Smiles Family Dentistry brings together compassionate care and modern dental solutions for every member of the family.</motion.p>
       <motion.div className="hero-actions" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .5 }}>
         <a className="btn btn-primary" href={CLINIC.booking} {...ext}>Book an appointment <ArrowUpRight size={19} /></a>
         <a className="btn btn-glass glass" href={wa()} {...ext}><MessageCircle size={19} /> WhatsApp us</a>
@@ -150,21 +157,32 @@ function About() {
         <div className="about-badge glass"><Heart size={22} /><span><b>Gentle care</b><small>for every age</small></span></div>
       </Reveal>
       <div className="about-copy">
-        <Reveal><Eyebrow>About United Smiles</Eyebrow><h2>A dental home built on <em>trust</em> & tradition.</h2></Reveal>
+        <Reveal><Eyebrow>About United Smiles</Eyebrow><h2>Trusted dental care <em>since 2008.</em></h2></Reveal>
         <Reveal delay={.1}>
-          <p className="large">We believe great dentistry starts with listening. No rush, no judgement — just honest advice and gentle, precise care.</p>
-          <p>At United Smiles in Kochi, we combine the warmth of a family clinic with modern technology: digital X-rays, sterilisation you can trust and treatment plans explained in plain language.</p>
-          <ul className="ticks">{['Sterile, hygienic environment', 'Digital X-rays & diagnosis', 'Transparent treatment plans', 'Care for kids to grandparents'].map(t => <li key={t}><Check size={18} />{t}</li>)}</ul>
+          <p className="large">At United Smiles Family Dentistry, we believe a healthy smile is the beginning of confidence.</p>
+          <p>Since 2008, we have been committed to making quality dental care accessible, comfortable and personalised for every member of the family.</p>
+          <p>From routine dental check-ups to advanced smile transformations, we bring together compassionate care and modern dental solutions to help you smile with confidence.</p>
         </Reveal>
         <Reveal delay={.2} className="lead-doctor glass">
-          <div className="lead-photo"><img src={img('1594824476967-48c8b964273f', 400)} alt="Dr. Annie" loading="lazy" /></div>
+          <div className="lead-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan" loading="lazy" /></div>
           <div>
             <span className="tag">Chief Dental Surgeon</span>
             <h3>Dr. Annie Mohan</h3>
-            <p>“Every smile carries a story. My job is to protect it, gently and for life.”</p>
-            <small>BDS · 28 years of experience</small>
+            <p>Caring for smiles at United Smiles since 2008.</p>
+            <small>BDS · 25+ years of experience</small>
           </div>
         </Reveal>
+      </div>
+    </div>
+    <div className="why">
+      <Reveal className="why-head"><Eyebrow>Why choose United Smiles?</Eyebrow><h2>More than dentistry. <em>A relationship built on trust.</em></h2>
+        <p>We combine experience, modern dentistry and compassionate care to make every smile matter.</p></Reveal>
+      <div className="why-grid">
+        {whyUs.map(({ icon: Icon, title, text }, i) => <Reveal key={title} delay={i * .06} className="why-card glass">
+          <span className="why-icon"><Icon size={24} /></span>
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </Reveal>)}
       </div>
     </div>
   </section>;
@@ -173,16 +191,16 @@ function About() {
 function Doctors() {
   return <section className="doctors section-pad" id="doctors">
     <div className="doctors-head">
-      <Reveal><Eyebrow>Visiting specialists</Eyebrow><h2>Expert hands, <em>under one roof.</em></h2></Reveal>
-      <Reveal className="doctors-aside"><p>Alongside Dr. Annie, trusted specialists visit United Smiles regularly — so you get advanced care without leaving Kochi.</p></Reveal>
+      <Reveal><Eyebrow>Our doctors</Eyebrow><h2>Expert hands, <em>under one roof.</em></h2></Reveal>
+      <Reveal className="doctors-aside"><p>Led by Dr. Annie Mohan, with a visiting orthodontist and oral surgeon — so you get specialist care without leaving Kochi.</p></Reveal>
     </div>
     <div className="doctor-row">
-      {visitingDoctors.map((d, i) => <Reveal key={i} delay={i * .08} className={`doctor-card d${i}`}>
-        <div className="doctor-arch"><img src={d.img} alt={`${d.role} at United Smiles`} loading="lazy" /></div>
+      {doctors.map((d, i) => <Reveal key={i} delay={i * .08} className={`doctor-card d${i}`}>
+        <div className="doctor-arch"><img src={d.img} alt={d.name} loading="lazy" /></div>
         <div className="doctor-info glass">
-          <span className="tag">{d.role}</span>
+          <span className="tag">{d.degree} · {d.role}</span>
           <h3>{d.name}</h3>
-          <small><Clock3 size={14} /> {d.days}</small>
+          <small>{d.note}</small>
         </div>
       </Reveal>)}
     </div>
@@ -205,7 +223,7 @@ function Treatments() {
 
   return <section className="treatments section-pad" id="treatments">
     <div className="treat-head">
-      <Reveal><Eyebrow>Our treatments</Eyebrow><h2>Care for every <em>kind of smile.</em></h2></Reveal>
+      <Reveal><Eyebrow>Our dental specialities</Eyebrow><h2>Complete dental care. <em>Beautifully connected.</em></h2></Reveal>
       <Reveal className="slider-controls">
         <button className="glass" onClick={() => go(-1)} aria-label="Previous treatment"><ChevronLeft /></button>
         <button className="glass" onClick={() => go(1)} aria-label="Next treatment"><ChevronRight /></button>
