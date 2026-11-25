@@ -99,9 +99,9 @@ p{line-height:1.75;color:var(--muted)}
 .doctors{background:linear-gradient(180deg,#fff,var(--cream))}
 .doctors-head,.treat-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:56px}
 .doctors-aside{max-width:400px}.doctors-aside p{font-size:18px;margin:0}
-.doctor-row{display:grid;grid-template-columns:repeat(3,minmax(0,320px));justify-content:center;gap:48px;align-items:start}
+.doctor-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,275px));justify-content:center;gap:28px;align-items:start}
 .doctor-card{position:relative;transition:transform .45s cubic-bezier(.22,1,.36,1)}
-.doctor-card.d1{margin-top:70px}
+.doctor-card:nth-child(even){margin-top:70px}
 .doctor-card:hover{transform:translateY(-12px)}
 .doctor-arch{border-radius:999px 999px 22px 22px;overflow:hidden;background:var(--sand);box-shadow:0 22px 44px rgba(14,79,74,.14)}
 .doctor-arch img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 25%;filter:saturate(.9);transition:transform .6s,filter .4s}
@@ -235,8 +235,8 @@ p{line-height:1.75;color:var(--muted)}
   .mobile-menu{display:flex;flex-direction:column;position:fixed;z-index:49;top:96px;left:14px;right:14px;padding:12px;border-radius:28px}
   .mobile-menu button{display:flex;justify-content:space-between;align-items:center;padding:16px 14px;border:0;background:none;font-size:18px;font-weight:500;border-radius:16px}
   .mobile-menu button:hover{background:rgba(255,255,255,.6)}
-  .doctor-row{gap:28px}
-  .doctor-card.d1{margin-top:40px}
+  .doctor-row{gap:24px}
+  .doctor-card:nth-child(even){margin-top:40px}
   .footer-panel{grid-template-columns:1fr 1fr}
 }
 @media(max-width:820px){
@@ -251,8 +251,8 @@ p{line-height:1.75;color:var(--muted)}
   .doctors-aside{margin-top:18px}
   .slider-controls{margin-top:22px}
   .doctor-row{grid-template-columns:1fr 1fr;gap:14px}
-  .doctor-card.d0{grid-column:1/-1;justify-self:center;width:62%;margin-bottom:10px}
-  .doctor-card.d1{margin-top:0}
+  .doctor-card:nth-child(even){margin-top:0}
+  .doctor-card:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:62%}
   .doctor-info{margin:-44px 6px 0;padding:12px 8px}.doctor-info h3{font-size:21px}.doctor-info .tag{font-size:11px;letter-spacing:.08em}.doctor-info small{font-size:13px}
   .carousel{height:560px}
   .t-card{width:290px;margin-left:-145px}
@@ -296,3 +296,25 @@ p{line-height:1.75;color:var(--muted)}
 .why-card p{font-size:16px;margin:0}
 @media(max-width:1100px){.why-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:820px){.why{margin-top:70px}.why-grid{grid-template-columns:1fr;gap:14px}.why-card{padding:22px}}
+
+/* ---------- About page ---------- */
+.know-more{margin-top:24px}
+.page-hero{position:relative;padding-top:170px;padding-bottom:90px;background:radial-gradient(ellipse at 75% 30%,#e3f1ec 0%,var(--ivory) 60%);overflow:hidden}
+.page-hero>:not(.blob){position:relative;z-index:1}
+.page-hero h1{font-size:clamp(46px,6vw,84px);line-height:1.02;color:var(--teal-deep);margin:22px 0 20px;max-width:900px}
+.page-hero h1 em{font-style:italic;font-weight:500;color:var(--mint)}
+.crumbs{font-size:15px;color:var(--muted);margin-bottom:26px}
+.crumbs a{color:var(--teal);font-weight:600}
+.annie{display:grid;grid-template-columns:.85fr 1.15fr;gap:6vw;align-items:center;background:linear-gradient(180deg,#fff,var(--cream))}
+.annie-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 20%;border-radius:999px 999px 28px 28px;box-shadow:0 30px 60px rgba(14,79,74,.15);outline:1px solid var(--gold-soft);outline-offset:10px}
+.annie-role{font:600 15px var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:14px 0 24px}
+.annie-stats{display:flex;gap:14px;margin-bottom:24px}
+.annie-stats div{padding:16px 22px;border-radius:20px}
+.annie-stats b{display:block;font:600 36px/1 var(--serif);color:var(--teal-deep)}
+.annie-stats small{font-size:14px;color:var(--muted)}
+.annie-copy p{font-size:18px}
+.annie-copy .btn{margin-top:12px}
+@media(max-width:820px){.page-hero{padding-top:130px;padding-bottom:60px}.annie{grid-template-columns:1fr}.annie-photo{max-width:420px}}
+.form-error{margin:0 0 16px;padding:12px 16px;border-radius:14px;background:#fdecea;color:#a3281b;font-size:15px}
+.form-note{display:block;margin-top:14px;font-size:14px;color:var(--muted)}
+.contact-form .btn:disabled{opacity:.7;cursor:wait;transform:none}

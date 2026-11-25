@@ -3,20 +3,20 @@ import { createRoot } from 'react-dom/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, ArrowUpRight, Award, Check, ChevronLeft, ChevronRight, ClipboardList, Clock3, Hand, Heart, HeartHandshake, Users,
-  Instagram, MapPin, Menu, MessageCircle, Phone, Play, Plus, ShieldCheck, Sparkles, Star, X, CalendarCheck
+  Instagram, MapPin, Menu, MessageCircle, Phone, Mail, Play, Plus, ShieldCheck, Sparkles, Star, X, CalendarCheck
 } from 'lucide-react';
 import Tooth3D from './Tooth3D.jsx';
 import './styles.css';
 
-// Address, hours and map pin from the clinic's Practo listing.
+// Clinic details shown across the site.
 const CLINIC = {
   name: 'United Smiles Family Dentistry',
   city: 'Kochi, Kerala',
   address: '67/3596-A, Highcourt Road, Shanmugham Road P.O., Opp. High Court of Kerala, Ernakulam',
-  phone: '+91 00000 00000', // TODO: clinic phone number
-  whatsapp: '910000000000', // TODO: WhatsApp number — country code + number, digits only
+  phone: '+91 94464 06942',
+  whatsapp: '919446406942',
   hours: 'Mon – Sat · 10:00 AM – 1:30 PM, 2:00 – 7:00 PM',
-  booking: 'https://www.practo.com/ernakulam/clinic/dr-annie-s-united-smiles-family-dentistry-aluva',
+  email: 'unitedsmiles.k@gmail.com',
   instagram: 'https://www.instagram.com/unitedsmilesfamilydentist/',
   igHandle: 'unitedsmilesfamilydentist',
   maps: 'https://share.google/Z5Qi2lvWD4hViJBU2',
@@ -25,6 +25,7 @@ const CLINIC = {
 const tel = `tel:${CLINIC.phone.replace(/\s/g, '')}`;
 const wa = (text = '') => `https://wa.me/${CLINIC.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 const ext = { target: '_blank', rel: 'noreferrer' };
+const FORMSPREE = 'https://formspree.io/f/xjywjdnj';
 
 const LOGO = `${import.meta.env.BASE_URL}logo.jpg`; // BASE_URL keeps it working under the GitHub Pages sub-path
 const img = (id, w = 900) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=75`;
@@ -54,6 +55,7 @@ const doctors = [
   { name: 'Dr. Annie Mohan', role: 'Chief Dental Surgeon', degree: 'BDS', note: '25+ years of experience', img: doctorPhoto('annie-mohan.jpg') },
   { name: 'Dr. Anupama P P', role: 'Orthodontist', degree: 'MDS', note: 'Visiting · By appointment', img: doctorPhoto('anupama-pp.jpg') },
   { name: 'Dr. Basil M Jacob', role: 'Oral Surgeon', degree: 'MDS', note: 'Visiting · By appointment', img: doctorPhoto('basil-m-jacob.jpg') },
+  { name: 'Dr. Biju Balakrishnan', role: 'Implantologist & Laser Specialist', degree: 'MDS', note: 'Visiting · By appointment', img: doctorPhoto('biju-balakrishnan.jpg') },
 ];
 
 const gallery = [
@@ -82,7 +84,12 @@ const reviews = [
 ];
 
 const NAV = [['About', 'about'], ['Doctors', 'doctors'], ['Treatments', 'treatments'], ['Gallery', 'gallery'], ['Reviews', 'reviews'], ['Contact', 'contact']];
-const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+const HOME = import.meta.env.BASE_URL;
+const ABOUT_PAGE = `${HOME}about/`;
+// Sections missing on this page (e.g. Gallery on the About page) live on the home page.
+const scrollTo = id => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth' }); else location.href = `${HOME}#${id}`; };
+// Every "Book" button scrolls to the appointment form (both pages have one).
+const book = { href: '#contact', onClick: e => { e.preventDefault(); scrollTo('contact'); } };
 
 function useWidth() {
   const [w, setW] = useState(window.innerWidth);
@@ -107,12 +114,12 @@ function Header() {
   const go = id => { scrollTo(id); setOpen(false); };
   return <>
     <header className="nav glass">
-      <a className="brand" href="#top" aria-label={`${CLINIC.name} home`}>
+      <a className="brand" href={HOME} aria-label={`${CLINIC.name} home`}>
         <img className="brand-mark" src={LOGO} alt="" />
         <span>United Smiles<small>FAMILY DENTISTRY · KOCHI</small></span>
       </a>
       <nav className="desktop-nav">{NAV.map(([label, id]) => <button key={id} onClick={() => go(id)}>{label}</button>)}</nav>
-      <a className="btn btn-primary nav-cta" href={CLINIC.booking} {...ext}>Book a visit <ArrowUpRight size={18} /></a>
+      <a className="btn btn-primary nav-cta" {...book}>Book a visit <ArrowUpRight size={18} /></a>
       <button className="menu-toggle glass" onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>{open ? <X /> : <Menu />}</button>
     </header>
     <AnimatePresence>{open && <motion.div className="mobile-menu glass" initial={{ opacity: 0, y: -10, scale: .97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: .97 }}>
@@ -129,7 +136,7 @@ function Hero() {
       <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .8 }}>Every smile has a story.<br /><em>Let yours shine.</em></motion.h1>
       <motion.p className="lead" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35 }}>From routine check-ups to advanced smile transformations, United Smiles Family Dentistry brings together compassionate care and modern dental solutions for every member of the family.</motion.p>
       <motion.div className="hero-actions" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .5 }}>
-        <a className="btn btn-primary" href={CLINIC.booking} {...ext}>Book an appointment <ArrowUpRight size={19} /></a>
+        <a className="btn btn-primary" {...book}>Book an appointment <ArrowUpRight size={19} /></a>
         <a className="btn btn-glass glass" href={wa()} {...ext}><MessageCircle size={19} /> WhatsApp us</a>
       </motion.div>
       <div className="hero-proof">
@@ -147,9 +154,10 @@ function Hero() {
   </section>;
 }
 
-function About() {
+// Home page shows a short version with "Know More"; the About page (full) shows everything.
+function About({ full = false }) {
   return <section className="about section-pad" id="about">
-    <div className="kasavu" />
+    {!full && <div className="kasavu" />}
     <div className="about-grid">
       <Reveal className="about-media">
         <div className="arch arch-main"><img src={img('1606811841689-23dfddce3e95', 1000)} alt="Dentist explaining treatment to a patient" loading="lazy" /></div>
@@ -161,20 +169,23 @@ function About() {
         <Reveal delay={.1}>
           <p className="large">At United Smiles Family Dentistry, we believe a healthy smile is the beginning of confidence.</p>
           <p>Since 2008, we have been committed to making quality dental care accessible, comfortable and personalised for every member of the family.</p>
-          <p>From routine dental check-ups to advanced smile transformations, we bring together compassionate care and modern dental solutions to help you smile with confidence.</p>
+          {full && <p>From routine dental check-ups to advanced smile transformations, we bring together compassionate care and modern dental solutions to help you smile with confidence.</p>}
         </Reveal>
-        <Reveal delay={.2} className="lead-doctor glass">
-          <div className="lead-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan" loading="lazy" /></div>
-          <div>
-            <span className="tag">Chief Dental Surgeon</span>
-            <h3>Dr. Annie Mohan</h3>
-            <p>Caring for smiles at United Smiles since 2008.</p>
-            <small>BDS · 25+ years of experience</small>
-          </div>
-        </Reveal>
+        {full ? null : <>
+          <Reveal delay={.2} className="lead-doctor glass">
+            <div className="lead-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan" loading="lazy" /></div>
+            <div>
+              <span className="tag">Chief Dental Surgeon</span>
+              <h3>Dr. Annie Mohan</h3>
+              <p>Caring for smiles at United Smiles since 2008.</p>
+              <small>BDS · 25+ years of experience</small>
+            </div>
+          </Reveal>
+          <Reveal delay={.25}><a className="btn btn-primary know-more" href={ABOUT_PAGE}>Know More <ArrowRight size={19} /></a></Reveal>
+        </>}
       </div>
     </div>
-    <div className="why">
+    {full && <div className="why">
       <Reveal className="why-head"><Eyebrow>Why choose United Smiles?</Eyebrow><h2>More than dentistry. <em>A relationship built on trust.</em></h2>
         <p>We combine experience, modern dentistry and compassionate care to make every smile matter.</p></Reveal>
       <div className="why-grid">
@@ -184,18 +195,37 @@ function About() {
           <p>{text}</p>
         </Reveal>)}
       </div>
-    </div>
+    </div>}
   </section>;
 }
 
-function Doctors() {
+function MeetAnnie() {
+  return <section className="annie section-pad" id="dr-annie">
+    <Reveal className="annie-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan" /></Reveal>
+    <Reveal className="annie-copy" delay={.1}>
+      <Eyebrow>Meet our chief dentist</Eyebrow>
+      <h2>Dr. Annie <em>Mohan</em></h2>
+      <p className="annie-role">BDS · Chief Dental Surgeon</p>
+      <div className="annie-stats">
+        <div className="glass"><b>25+</b><small>Years of experience</small></div>
+        <div className="glass"><b>2008</b><small>Caring for smiles since</small></div>
+      </div>
+      <p>Dr. Annie Mohan leads United Smiles Family Dentistry, guiding every treatment with the expertise and clinical experience she has built over more than 25 years.</p>
+      <p>Since founding the clinic in 2008, her focus has stayed the same: understanding each patient’s needs and expectations, and creating personalised, family-friendly care for every generation.</p>
+      <a className="btn btn-primary" {...book}>Book with Dr. Annie <ArrowUpRight size={19} /></a>
+    </Reveal>
+  </section>;
+}
+
+function Doctors({ visitingOnly = false }) {
+  const list = visitingOnly ? doctors.filter(d => d.note.startsWith('Visiting')) : doctors;
   return <section className="doctors section-pad" id="doctors">
     <div className="doctors-head">
-      <Reveal><Eyebrow>Our doctors</Eyebrow><h2>Expert hands, <em>under one roof.</em></h2></Reveal>
-      <Reveal className="doctors-aside"><p>Led by Dr. Annie Mohan, with a visiting orthodontist and oral surgeon — so you get specialist care without leaving Kochi.</p></Reveal>
+      <Reveal><Eyebrow>{visitingOnly ? 'Visiting specialists' : 'Our doctors'}</Eyebrow><h2>Expert hands, <em>under one roof.</em></h2></Reveal>
+      <Reveal className="doctors-aside"><p>{visitingOnly ? 'Alongside Dr. Annie, these specialists visit United Smiles regularly' : 'Led by Dr. Annie Mohan, with visiting specialists in orthodontics, oral surgery, implantology and laser dentistry'} — so you get specialist care without leaving Kochi.</p></Reveal>
     </div>
     <div className="doctor-row">
-      {doctors.map((d, i) => <Reveal key={i} delay={i * .08} className={`doctor-card d${i}`}>
+      {list.map((d, i) => <Reveal key={i} delay={i * .08} className={`doctor-card d${i}`}>
         <div className="doctor-arch"><img src={d.img} alt={d.name} loading="lazy" /></div>
         <div className="doctor-info glass">
           <span className="tag">{d.degree} · {d.role}</span>
@@ -247,7 +277,7 @@ function Treatments() {
               <span className="tag">{t.tag}</span>
               <h3>{t.title}</h3>
               <p>{t.desc}</p>
-              <a className="t-link" tabIndex={off === 0 ? 0 : -1} href={CLINIC.booking} {...ext}>Book a consultation <ArrowRight size={17} /></a>
+              <a className="t-link" tabIndex={off === 0 ? 0 : -1} {...book}>Book a consultation <ArrowRight size={17} /></a>
             </div>
           </motion.article>;
         })}
@@ -352,7 +382,22 @@ function InstaFeed() {
 }
 
 function Contact() {
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const submit = async e => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    setStatus('sending');
+    try {
+      // Formspree emails every field to the clinic.
+      const res = await fetch(FORMSPREE, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(res.status);
+      form.reset();
+      setStatus('sent');
+    } catch {
+      setStatus('error');
+    }
+  };
   return <section className="contact section-pad" id="contact">
     <div className="blob blob-c" />
     <div className="contact-left">
@@ -363,30 +408,33 @@ function Contact() {
         <div className="contact-list">
           <a className="glass" href={CLINIC.maps} {...ext}><MapPin size={20} /><p><small>FIND US · GET DIRECTIONS</small>{CLINIC.address}</p></a>
           <div className="glass"><Clock3 size={20} /><p><small>OPENING HOURS</small>{CLINIC.hours}</p></div>
-          <a className="glass" href={tel}><Phone size={20} /><p><small>CALL</small>{CLINIC.phone}</p></a>
+          <a className="glass" href={tel}><Phone size={20} /><p><small>CALL / WHATSAPP</small>{CLINIC.phone}</p></a>
+          <a className="glass" href={`mailto:${CLINIC.email}`}><Mail size={20} /><p><small>EMAIL</small>{CLINIC.email}</p></a>
         </div>
       </Reveal>
     </div>
     <Reveal className="contact-right">
-      {/* Form sends the request to the clinic's WhatsApp; Practo is offered for instant online booking. */}
-      <form className="contact-form glass" onSubmit={e => {
-        e.preventDefault();
-        const f = Object.fromEntries(new FormData(e.currentTarget));
-        window.open(wa(`Hello United Smiles, I'd like an appointment.\nName: ${f.name}\nPhone: ${f.phone}\nTreatment: ${f.treatment || 'Not sure'}\n${f.message || ''}`), '_blank', 'noreferrer');
-        setSent(true);
-      }}>
-        {sent ? <div className="success"><span><Check size={26} /></span><h3>Thank you!</h3><p>Your request has opened in WhatsApp — just press send. We’ll get back to you shortly.</p><button type="button" className="t-link" onClick={() => setSent(false)}>Send another</button></div> : <>
+      <form className="contact-form glass" onSubmit={submit}>
+        {status === 'sent' ? <div className="success"><span><Check size={26} /></span><h3>Thank you!</h3><p>Your appointment request has been sent. Our team will contact you shortly to confirm.</p><button type="button" className="t-link" onClick={() => setStatus('idle')}>Send another request</button></div> : <>
           <h3>Request an appointment</h3>
+          <input type="hidden" name="_subject" value="New appointment request — United Smiles website" />
           <div className="form-row">
             <label>Your name<input name="name" required placeholder="Full name" autoComplete="name" /></label>
             <label>Phone number<input name="phone" type="tel" required placeholder="+91" autoComplete="tel" /></label>
           </div>
+          <div className="form-row">
+            <label>Preferred date<input name="preferred_date" type="date" required min={today} /></label>
+            <label>Preferred time<input name="preferred_time" type="time" required min="10:00" max="19:00" /></label>
+          </div>
           <label>Treatment<select name="treatment" defaultValue=""><option value="" disabled>Choose a treatment</option>{treatments.map(t => <option key={t.title}>{t.title}</option>)}<option>General check-up</option></select></label>
           <label>Message<textarea name="message" rows="3" placeholder="Anything we should know?" /></label>
+          {status === 'error' && <p className="form-error" role="alert">Sorry, the request couldn’t be sent. Please try again, or call / WhatsApp us on {CLINIC.phone}.</p>}
           <div className="form-actions">
-            <button className="btn btn-primary" type="submit"><MessageCircle size={19} /> Send on WhatsApp</button>
-            <a className="btn btn-glass glass" href={CLINIC.booking} {...ext}><CalendarCheck size={19} /> Book on Practo</a>
+            <button className="btn btn-primary" type="submit" disabled={status === 'sending'}>{status === 'sending' ? 'Sending…' : <>Send request <ArrowUpRight size={19} /></>}</button>
+            <a className="btn btn-glass glass" href={wa('Hello United Smiles, I would like to book an appointment.')} {...ext}><MessageCircle size={19} /> WhatsApp</a>
+            <a className="btn btn-glass glass" href={tel}><Phone size={19} /> Call</a>
           </div>
+          <small className="form-note">Clinic hours: {CLINIC.hours}. We’ll confirm your slot by phone.</small>
         </>}
       </form>
       <iframe className="map glass" title="United Smiles location map" loading="lazy" src={CLINIC.mapEmbed} />
@@ -398,12 +446,13 @@ function Footer() {
   return <footer className="footer section-pad">
     <div className="footer-panel glass">
       <div className="footer-brand">
-        <a className="brand light" href="#top"><img className="brand-mark" src={LOGO} alt="" /><span>United Smiles<small>FAMILY DENTISTRY · KOCHI</small></span></a>
+        <a className="brand light" href={HOME}><img className="brand-mark" src={LOGO} alt="" /><span>United Smiles<small>FAMILY DENTISTRY · KOCHI</small></span></a>
         <p>Traditional care.<br />Modern smiles.</p>
       </div>
       <div className="footer-col"><span>EXPLORE</span>{NAV.map(([label, id]) => <button key={id} onClick={() => scrollTo(id)}>{label}</button>)}</div>
       <div className="footer-col"><span>CONTACT</span>
         <a href={tel}><Phone size={16} /> {CLINIC.phone}</a>
+        <a href={`mailto:${CLINIC.email}`}><Mail size={16} /> {CLINIC.email}</a>
         <a href={CLINIC.maps} {...ext}><MapPin size={16} /> {CLINIC.address}</a>
       </div>
       <div className="footer-col"><span>FOLLOW</span>
@@ -419,7 +468,7 @@ function QuickActions() {
   const [open, setOpen] = useState(false);
   const actions = [
     { label: 'Call us', href: tel, icon: <Phone size={22} />, cls: 'qa-call' },
-    { label: 'Book appointment', href: CLINIC.booking, icon: <CalendarCheck size={22} />, cls: 'qa-book', ...ext },
+    { label: 'Book appointment', icon: <CalendarCheck size={22} />, cls: 'qa-book', ...book },
     { label: 'WhatsApp', href: wa('Hello United Smiles, I have a question.'), icon: <MessageCircle size={22} />, cls: 'qa-wa', ...ext },
   ];
   return <div className="quick-actions">
@@ -435,10 +484,26 @@ function QuickActions() {
   </div>;
 }
 
+function AboutHero() {
+  return <section className="page-hero section-pad" id="top">
+    <div className="blob blob-a" /><div className="blob blob-b" />
+    <nav className="crumbs" aria-label="Breadcrumb"><a href={HOME}>Home</a> / <span>About us</span></nav>
+    <Eyebrow>United Smiles Family Dentistry</Eyebrow>
+    <h1>Every smile has a story. <em>Let yours shine.</em></h1>
+    <p className="lead">Trusted dental care since 2008 — compassionate, modern and personalised for every member of the family.</p>
+  </section>;
+}
+
+const isAboutPage = document.body.dataset.page === 'about';
+
 function App() {
+  // Sections render after load, so the browser's own jump to #section (from the other page) misses; redo it once mounted.
+  useEffect(() => { if (location.hash) setTimeout(() => document.getElementById(location.hash.slice(1))?.scrollIntoView(), 300); }, []);
   return <div className="site">
     <Header />
-    <main><Hero /><About /><Doctors /><Treatments /><Gallery /><Reviews /><InstaFeed /><Contact /></main>
+    {isAboutPage
+      ? <main><AboutHero /><About full /><MeetAnnie /><Doctors visitingOnly /><Treatments /><Reviews /><Contact /></main>
+      : <main><Hero /><About /><Doctors /><Treatments /><Gallery /><Reviews /><InstaFeed /><Contact /></main>}
     <Footer />
     <QuickActions />
   </div>;

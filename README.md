@@ -1,19 +1,20 @@
 # United Smiles Family Dentistry — Website
 
-Official website for **United Smiles Family Dentistry**, led by **Dr. Annie Mohan (BDS, 28 years of experience)**, opposite the High Court of Kerala, Ernakulam, Kochi.
+Official website for **United Smiles Family Dentistry**, led by **Dr. Annie Mohan (BDS, 25+ years of experience)**, opposite the High Court of Kerala, Ernakulam, Kochi.
 
-**Live site:** https://nihal459.github.io/United_Smiles_Dental_Clinic/
+**Live site:** https://unitedsmiledentalclinic.com
 
 ## Features
 - **Interactive 3D tooth** (Three.js) that rotates on its own and can be dragged, with animated green-and-blue protection swooshes
-- **Online booking** through the clinic's [Practo page](https://www.practo.com/ernakulam/clinic/dr-annie-s-united-smiles-family-dentistry-aluva)
+- **Appointment requests:** the contact form (with preferred date & time) is emailed to the clinic via [Formspree](https://formspree.io); every "Book" button scrolls to it
 - **Floating quick actions:** a + button with Call, Book appointment and WhatsApp
 - **About section and visiting specialists**, with arched portrait cards
 - **3D circular treatments carousel:** auto-rotates and can be dragged, swiped or clicked
 - **Clinic gallery collage** with "View more"
 - **Google-style patient reviews**
 - **Instagram-style reel feed** that plays videos in a pop-up
-- **Contact section** with a Google Map, opening hours and an appointment form that sends to WhatsApp
+- **Contact section** with a Google Map, opening hours, phone, WhatsApp and email
+- **About page** (`/about/`) with the full clinic story, Dr. Annie, visiting specialists, treatments, reviews and contact form
 - **iOS-style "liquid glass" UI**, traditional-meets-modern design, fully responsive
 
 ## Tech stack
