@@ -11,7 +11,7 @@ Official website for **United Smiles Family Dentistry**, led by **Dr. Annie Moha
 - **About section and visiting specialists**, with arched portrait cards
 - **3D circular treatments carousel:** auto-rotates and can be dragged, swiped or clicked
 - **Clinic gallery collage** with "View more"
-- **Google-style patient reviews**
+- **Live Google reviews** (Jotform reviews widget, updates automatically)
 - **Instagram-style reel feed** that plays videos in a pop-up
 - **Contact section** with a Google Map, opening hours, phone, WhatsApp and email
 - **About page** (`/about/`) with the full clinic story, Dr. Annie, visiting specialists, treatments, reviews and contact form
@@ -48,7 +48,6 @@ vite.config.js         Vite config (GitHub Pages base path)
 Search the code for `TODO`:
 - Clinic **phone** and **WhatsApp** numbers (`CLINIC` in `src/main.jsx`)
 - Visiting doctors' names, photos and visiting days
-- Patient reviews (the current ones are layout samples)
 - Instagram reels (currently a sample video)
 - Real clinic photos (currently free Unsplash stock images)
 

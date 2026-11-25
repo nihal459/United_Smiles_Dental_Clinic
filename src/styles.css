@@ -149,13 +149,12 @@ p{line-height:1.75;color:var(--muted)}
 .g-score b{font:600 46px/1 var(--sans);color:var(--ink)}
 .g-score small{font-size:15px;color:var(--muted);width:100%}
 .g-actions{margin-left:auto}
-.review-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 24px;scrollbar-width:none}
-.review-track::-webkit-scrollbar{display:none}
-.g-card{flex:0 0 360px;scroll-snap-align:start;background:#fff;border:1px solid #ebe5d8;border-radius:22px;padding:24px;box-shadow:0 8px 24px rgba(14,79,74,.06)}
-.g-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.g-head>div{flex:1}.g-head b{display:block;font-size:16px}.g-head small{font-size:14px;color:var(--muted)}
-.g-avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px}
-.g-card p{font-size:16px;margin:10px 0 0;color:#3c4745}
+.reviews-widget{min-height:200px}
+/* Jotform gives its carousel a fixed 600px height; let it fit the cards instead */
+.reviews-widget .jf-reviews-carousel{height:auto!important;min-height:0!important}
+/* the Jotform widget brings its own bottom padding, so trim the section gap after it (beats the mobile .section-pad rule too) */
+.reviews.section-pad{padding-bottom:16px}
+.reviews+.section-pad{padding-top:56px}
 
 /* ---------- Instagram feed ---------- */
 .insta{display:grid;grid-template-columns:.9fr 1.1fr;gap:6vw;align-items:center;background:radial-gradient(ellipse at 80% 50%,rgba(31,158,143,.14),transparent 60%),var(--ivory)}
@@ -263,7 +262,6 @@ p{line-height:1.75;color:var(--muted)}
   .tile-4{grid-column:span 2}
   .g-summary{gap:14px}.g-actions{margin-left:0;width:100%}
   .g-actions .btn{margin-left:auto}
-  .g-card{flex-basis:85%}
   .ig-feed{justify-self:stretch;padding:14px}
   .ig-ring{width:58px;height:58px}
   .form-row{grid-template-columns:1fr;gap:0}

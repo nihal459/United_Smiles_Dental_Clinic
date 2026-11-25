@@ -73,16 +73,6 @@ const reels = [
   { img: '1667133295315-820bb6481730', caption: 'Smile makeover reveal 😁', views: '21.2K' },
 ];
 
-// TODO: SAMPLE reviews for layout only. Replace with real Google reviews (or a reviews widget) before publishing.
-const reviews = [
-  { name: 'Anjali Nair', when: '2 weeks ago', text: 'Dr. Annie explained every step before starting. My root canal was completely painless and the clinic is spotless. Highly recommend!', color: '#0e7c6b' },
-  { name: 'Rahul Menon', when: '1 month ago', text: 'Got my aligners done here. Friendly staff, on-time appointments and genuinely caring doctors. Best dental clinic in Kochi.', color: '#b8792f' },
-  { name: 'Fathima Rasheed', when: '3 weeks ago', text: 'My kids actually look forward to their dental visits now! The team is so patient and gentle with children.', color: '#7a4fa3' },
-  { name: 'George Thomas', when: '2 months ago', text: 'Had two implants placed. Very professional, modern equipment and clear pricing upfront. Very happy with the result.', color: '#2d6cb5' },
-  { name: 'Lakshmi Pillai', when: '5 days ago', text: 'Whitening results were beyond what I expected. Comfortable, quick and the staff made me feel at home.', color: '#c2445c' },
-  { name: 'Arjun Varghese', when: '1 month ago', text: 'Clean, calm and welcoming. Dr. Annie and her team took the fear out of dentistry for me.', color: '#4b7d2e' },
-];
-
 const NAV = [['About', 'about'], ['Doctors', 'doctors'], ['Treatments', 'treatments'], ['Gallery', 'gallery'], ['Reviews', 'reviews'], ['Contact', 'contact']];
 const HOME = import.meta.env.BASE_URL;
 const ABOUT_PAGE = `${HOME}about/`;
@@ -308,32 +298,22 @@ function Gallery() {
   </section>;
 }
 
+// Live Google reviews via a Jotform website widget (configured in the Jotform dashboard).
+const REVIEWS_WIDGET = '01a2125bae4070008ee93d2ce1204d281fe7';
+
 function Reviews() {
-  const scroll = dir => document.getElementById('review-track')?.scrollBy({ left: dir * 380, behavior: 'smooth' });
+  useEffect(() => {
+    const s = document.createElement('script');
+    s.src = `https://www.jotform.com/website-widgets/embed/${REVIEWS_WIDGET}`;
+    s.defer = true;
+    document.body.appendChild(s);
+    return () => s.remove();
+  }, []);
   return <section className="reviews section-pad" id="reviews">
     <div className="treat-head">
       <Reveal><Eyebrow>Patient reviews</Eyebrow><h2>Kind words from <em>our patients.</em></h2></Reveal>
     </div>
-    <Reveal className="g-summary glass">
-      <GoogleG size={40} />
-      <div className="g-score"><b>4.9</b><Stars size={20} /><small>Based on Google reviews</small></div>
-      <div className="g-actions">
-        <button className="glass round" onClick={() => scroll(-1)} aria-label="Previous reviews"><ChevronLeft /></button>
-        <button className="glass round" onClick={() => scroll(1)} aria-label="Next reviews"><ChevronRight /></button>
-        <a className="btn btn-primary" href={CLINIC.maps} {...ext}>Write a review</a>
-      </div>
-    </Reveal>
-    <div className="review-track" id="review-track">
-      {reviews.map(r => <article className="g-card" key={r.name}>
-        <div className="g-head">
-          <span className="g-avatar" style={{ background: r.color }}>{r.name[0]}</span>
-          <div><b>{r.name}</b><small>{r.when}</small></div>
-          <GoogleG size={20} />
-        </div>
-        <Stars size={17} />
-        <p>{r.text}</p>
-      </article>)}
-    </div>
+    <div className="reviews-widget" id={`JFWebsiteWidget-${REVIEWS_WIDGET}`} />
   </section>;
 }
 
