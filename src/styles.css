@@ -9,11 +9,11 @@
 img{display:block;max-width:100%}button,a,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}a{text-decoration:none}
 .site{overflow-x:clip}
 .section-pad{padding:120px max(6vw,20px)}
-h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;margin:0}
+h1,h2,h3,.hero-title{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;margin:0}
 h2{font-size:clamp(42px,5vw,68px);line-height:1.04;margin-top:18px}
-h1 em,h2 em{font-style:italic;font-weight:500;color:var(--mint)}
+h1 em,h2 em,.hero-title em{font-style:italic;font-weight:500;color:var(--mint)}
 p{line-height:1.75;color:var(--muted)}
-.eyebrow{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.eyebrow{font-family:var(--sans);display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
 .eyebrow-line{width:34px;height:2px;background:var(--gold);box-shadow:0 4px 0 var(--gold-soft)}
 .tag{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mint)}
 .stars{display:inline-flex;gap:2px;color:#f4b400}
@@ -60,7 +60,7 @@ p{line-height:1.75;color:var(--muted)}
 .blob-a{width:420px;height:420px;background:rgba(31,158,143,.22);right:4%;top:18%}
 .blob-b{width:340px;height:340px;background:rgba(231,211,163,.5);left:-80px;bottom:5%}
 .hero-copy{position:relative;z-index:2}
-.hero h1{font-size:clamp(56px,7vw,104px);line-height:.98;margin:26px 0 24px;color:var(--teal-deep)}
+.hero .hero-title{font-size:clamp(56px,7vw,104px);line-height:.98;margin:26px 0 24px;color:var(--teal-deep)}
 .lead{font-size:20px;max-width:540px}
 .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
 .hero-proof{display:flex;align-items:center;gap:14px;margin-top:46px}
@@ -152,6 +152,13 @@ p{line-height:1.75;color:var(--muted)}
 .reviews-widget{min-height:200px}
 /* Jotform gives its carousel a fixed 600px height; let it fit the cards instead */
 .reviews-widget .jf-reviews-carousel{height:auto!important;min-height:0!important}
+/* phones: drop the widget's own side padding so the boxes use the full width */
+@media(max-width:600px){
+  .reviews .treat-head{margin-bottom:8px}
+  .reviews-widget .jf-reviews-main{padding:0!important}
+  .reviews-widget .jf-reviews-header-card{width:100%!important;max-width:none!important;padding:18px!important}
+  .reviews-widget .jf-reviews-list{width:100%!important;max-width:none!important;padding:16px 16px 0!important}
+}
 /* the Jotform widget brings its own bottom padding, so trim the section gap after it (beats the mobile .section-pad rule too) */
 .reviews.section-pad{padding-bottom:16px}
 .reviews+.section-pad{padding-top:56px}
@@ -273,7 +280,7 @@ p{line-height:1.75;color:var(--muted)}
   .brand{font-size:20px}.brand small{display:none}.brand-mark{width:38px;height:38px;font-size:15px}
   .nav-cta{display:none}
   .mobile-menu{top:86px}
-  .hero h1{font-size:52px}
+  .hero .hero-title{font-size:52px}
   .float-chip{font-size:13px;padding:9px 14px}
   .ticks{grid-template-columns:1fr}
   .lead-doctor{flex-direction:column;align-items:flex-start}

@@ -91,7 +91,7 @@ const Reveal = ({ children, className = '', delay = 0 }) => (
   <motion.div className={className} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .7, delay, ease: [.22, 1, .36, 1] }}>{children}</motion.div>
 );
 
-const Eyebrow = ({ children }) => <div className="eyebrow"><span className="eyebrow-line" />{children}</div>;
+const Eyebrow = ({ children, as: Tag = 'div' }) => <Tag className="eyebrow"><span className="eyebrow-line" />{children}</Tag>;
 
 const Stars = ({ size = 16 }) => <span className="stars" aria-label="5 out of 5 stars">{[0, 1, 2, 3, 4].map(i => <Star key={i} size={size} fill="currentColor" strokeWidth={0} />)}</span>;
 
@@ -122,9 +122,9 @@ function Hero() {
   return <section className="hero section-pad" id="top">
     <div className="blob blob-a" /><div className="blob blob-b" />
     <div className="hero-copy">
-      <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .1 }}><Eyebrow>Trusted dental care since 2008</Eyebrow></motion.div>
-      <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .8 }}>Every smile has a story.<br /><em>Let yours shine.</em></motion.h1>
-      <motion.p className="lead" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35 }}>From routine check-ups to advanced smile transformations, United Smiles Family Dentistry brings together compassionate care and modern dental solutions for every member of the family.</motion.p>
+      <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .1 }}><Eyebrow as="h1">Family dental clinic in Kochi · Since 2008</Eyebrow></motion.div>
+      <motion.p className="hero-title" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2, duration: .8 }}>Every smile has a story.<br /><em>Let yours shine.</em></motion.p>
+      <motion.p className="lead" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35 }}>From routine check-ups to braces, implants and root canal treatment, United Smiles Family Dentistry in Ernakulam, Kochi brings together compassionate care and modern dentistry for every member of the family.</motion.p>
       <motion.div className="hero-actions" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .5 }}>
         <a className="btn btn-primary" {...book}>Book an appointment <ArrowUpRight size={19} /></a>
         <a className="btn btn-glass glass" href={wa()} {...ext}><MessageCircle size={19} /> WhatsApp us</a>
@@ -155,15 +155,15 @@ function About({ full = false }) {
         <div className="about-badge glass"><Heart size={22} /><span><b>Gentle care</b><small>for every age</small></span></div>
       </Reveal>
       <div className="about-copy">
-        <Reveal><Eyebrow>About United Smiles</Eyebrow><h2>Trusted dental care <em>since 2008.</em></h2></Reveal>
+        <Reveal><Eyebrow>About United Smiles</Eyebrow><h2>Trusted dental care in Kochi <em>since 2008.</em></h2></Reveal>
         <Reveal delay={.1}>
           <p className="large">At United Smiles Family Dentistry, we believe a healthy smile is the beginning of confidence.</p>
-          <p>Since 2008, we have been committed to making quality dental care accessible, comfortable and personalised for every member of the family.</p>
+          <p>Since 2008, our clinic opposite the High Court of Kerala in Ernakulam has been committed to making quality dental care accessible, comfortable and personalised for every member of the family.</p>
           {full && <p>From routine dental check-ups to advanced smile transformations, we bring together compassionate care and modern dental solutions to help you smile with confidence.</p>}
         </Reveal>
         {full ? null : <>
           <Reveal delay={.2} className="lead-doctor glass">
-            <div className="lead-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan" loading="lazy" /></div>
+            <div className="lead-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan, BDS, Chief Dental Surgeon at United Smiles Family Dentistry" loading="lazy" /></div>
             <div>
               <span className="tag">Chief Dental Surgeon</span>
               <h3>Dr. Annie Mohan</h3>
@@ -191,9 +191,9 @@ function About({ full = false }) {
 
 function MeetAnnie() {
   return <section className="annie section-pad" id="dr-annie">
-    <Reveal className="annie-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan" /></Reveal>
+    <Reveal className="annie-photo"><img src={doctorPhoto('annie-mohan.jpg')} alt="Dr. Annie Mohan, BDS, Chief Dental Surgeon at United Smiles Family Dentistry, Kochi" /></Reveal>
     <Reveal className="annie-copy" delay={.1}>
-      <Eyebrow>Meet our chief dentist</Eyebrow>
+      <Eyebrow>Meet our chief dental surgeon</Eyebrow>
       <h2>Dr. Annie <em>Mohan</em></h2>
       <p className="annie-role">BDS · Chief Dental Surgeon</p>
       <div className="annie-stats">
@@ -211,12 +211,12 @@ function Doctors({ visitingOnly = false }) {
   const list = visitingOnly ? doctors.filter(d => d.note.startsWith('Visiting')) : doctors;
   return <section className="doctors section-pad" id="doctors">
     <div className="doctors-head">
-      <Reveal><Eyebrow>{visitingOnly ? 'Visiting specialists' : 'Our doctors'}</Eyebrow><h2>Expert hands, <em>under one roof.</em></h2></Reveal>
+      <Reveal><Eyebrow>{visitingOnly ? 'Visiting specialists' : 'Our dentists in Kochi'}</Eyebrow><h2>Expert dentists, <em>under one roof.</em></h2></Reveal>
       <Reveal className="doctors-aside"><p>{visitingOnly ? 'Alongside Dr. Annie, these specialists visit United Smiles regularly' : 'Led by Dr. Annie Mohan, with visiting specialists in orthodontics, oral surgery, implantology and laser dentistry'} — so you get specialist care without leaving Kochi.</p></Reveal>
     </div>
     <div className="doctor-row">
       {list.map((d, i) => <Reveal key={i} delay={i * .08} className={`doctor-card d${i}`}>
-        <div className="doctor-arch"><img src={d.img} alt={d.name} loading="lazy" /></div>
+        <div className="doctor-arch"><img src={d.img} alt={`${d.name.replace(/ /g, ' ')}, ${d.degree} ${d.role}`} loading="lazy" /></div>
         <div className="doctor-info glass">
           <span className="tag">{d.degree} · {d.role}</span>
           <h3>{d.name}</h3>
@@ -243,7 +243,7 @@ function Treatments() {
 
   return <section className="treatments section-pad" id="treatments">
     <div className="treat-head">
-      <Reveal><Eyebrow>Our dental specialities</Eyebrow><h2>Complete dental care. <em>Beautifully connected.</em></h2></Reveal>
+      <Reveal><Eyebrow>Dental treatments in Kochi</Eyebrow><h2>Complete dental care <em>in Ernakulam.</em></h2></Reveal>
       <Reveal className="slider-controls">
         <button className="glass" onClick={() => go(-1)} aria-label="Previous treatment"><ChevronLeft /></button>
         <button className="glass" onClick={() => go(1)} aria-label="Next treatment"><ChevronRight /></button>
@@ -287,12 +287,12 @@ function Gallery() {
     </div>
     <div className="collage">
       {shown.map((id, i) => <Reveal key={id} delay={i * .05} className={`tile tile-${i}`}>
-        <img src={img(id, i === 0 ? 1100 : 700)} alt="United Smiles clinic" loading="lazy" />
+        <img src={img(id, i === 0 ? 1100 : 700)} alt="Dental treatment room" loading="lazy" />
         {i === 4 && !more && <button className="tile-more glass" onClick={() => setMore(true)}><b>+{rest.length}</b>View more</button>}
       </Reveal>)}
     </div>
     <AnimatePresence>{more && <motion.div className="collage-more" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-      {rest.map(id => <div key={id} className="tile"><img src={img(id, 700)} alt="United Smiles clinic" loading="lazy" /></div>)}
+      {rest.map(id => <div key={id} className="tile"><img src={img(id, 700)} alt="Dental treatment room" loading="lazy" /></div>)}
     </motion.div>}</AnimatePresence>
     {more && <div className="center"><button className="btn btn-glass glass" onClick={() => setMore(false)}>Show less</button></div>}
   </section>;
@@ -311,7 +311,7 @@ function Reviews() {
   }, []);
   return <section className="reviews section-pad" id="reviews">
     <div className="treat-head">
-      <Reveal><Eyebrow>Patient reviews</Eyebrow><h2>Kind words from <em>our patients.</em></h2></Reveal>
+      <Reveal><Eyebrow>Patient reviews on Google</Eyebrow><h2>Kind words from <em>our patients.</em></h2></Reveal>
     </div>
     <div className="reviews-widget" id={`JFWebsiteWidget-${REVIEWS_WIDGET}`} />
   </section>;
@@ -382,9 +382,9 @@ function Contact() {
     <div className="blob blob-c" />
     <div className="contact-left">
       <Reveal>
-        <Eyebrow>Visit us</Eyebrow>
-        <h2>Let’s make you <em>smile more.</em></h2>
-        <p>Have a question or ready to book? Send us a note, call or WhatsApp — our team will help you find the right next step.</p>
+        <Eyebrow>Visit us · Opp. High Court, Ernakulam</Eyebrow>
+        <h2>Book your visit <em>in Kochi.</em></h2>
+        <p>Find us on High Court Road, opposite the High Court of Kerala. Have a question or ready to book? Send us a note, call or WhatsApp — our team will help you find the right next step.</p>
         <div className="contact-list">
           <a className="glass" href={CLINIC.maps} {...ext}><MapPin size={20} /><p><small>FIND US · GET DIRECTIONS</small>{CLINIC.address}</p></a>
           <div className="glass"><Clock3 size={20} /><p><small>OPENING HOURS</small>{CLINIC.hours}</p></div>
@@ -417,7 +417,7 @@ function Contact() {
           <small className="form-note">Clinic hours: {CLINIC.hours}. We’ll confirm your slot by phone.</small>
         </>}
       </form>
-      <iframe className="map glass" title="United Smiles location map" loading="lazy" src={CLINIC.mapEmbed} />
+      <iframe className="map glass" title="Map: United Smiles Family Dentistry, opposite the High Court of Kerala, Ernakulam" loading="lazy" src={CLINIC.mapEmbed} />
     </Reveal>
   </section>;
 }
@@ -440,7 +440,7 @@ function Footer() {
         <a className="btn btn-glass glass" href={wa()} {...ext}><MessageCircle size={18} /> WhatsApp</a>
       </div>
     </div>
-    <div className="footer-bottom"><span>© {new Date().getFullYear()} United Smiles Family Dentistry, Kochi.</span><button onClick={() => scrollTo('top')}>Back to top ↑</button></div>
+    <div className="footer-bottom"><span>© {new Date().getFullYear()} United Smiles Family Dentistry, Ernakulam, Kochi.</span><button onClick={() => scrollTo('top')}>Back to top ↑</button></div>
   </footer>;
 }
 
@@ -469,8 +469,8 @@ function AboutHero() {
     <div className="blob blob-a" /><div className="blob blob-b" />
     <nav className="crumbs" aria-label="Breadcrumb"><a href={HOME}>Home</a> / <span>About us</span></nav>
     <Eyebrow>United Smiles Family Dentistry</Eyebrow>
-    <h1>Every smile has a story. <em>Let yours shine.</em></h1>
-    <p className="lead">Trusted dental care since 2008 — compassionate, modern and personalised for every member of the family.</p>
+    <h1>Trusted family dentists in Ernakulam <em>since 2008.</em></h1>
+    <p className="lead">Compassionate, modern and personalised dental care for every member of the family — opposite the High Court of Kerala, Kochi.</p>
   </section>;
 }
 
