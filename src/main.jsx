@@ -58,11 +58,32 @@ const doctors = [
   { name: 'Dr. Biju Balakrishnan', role: 'Implantologist & Laser Specialist', degree: 'MDS', note: 'Visiting · By appointment', img: doctorPhoto('biju-balakrishnan.jpg') },
 ];
 
-const gallery = [
-  '1629909613638-0e4a1fad8f81', '1629909613654-28e377c37b09', '1629909615184-74f495363b67', '1598256989800-fe5f95da9787',
-  '1616391182219-e080b4d1043a', '1643660527072-9c702932f606', '1609207825181-52d3214556dd', '1519494026892-80bbd2d6fd0d',
-  '1607613009820-a29f7bb81c04', '1606811841689-23dfddce3e95',
+// Real clinic photos live in public/photos/; treatment-room tiles are still stock (Unsplash ids).
+const photo = (file, alt) => ({ src: `${import.meta.env.BASE_URL}photos/${file}`, alt });
+const interior = [
+  photo('reception.jpg', 'Reception at United Smiles Family Dentistry, Kochi'),
+  photo('waiting-lounge.jpg', 'Patient waiting lounge with aquarium at United Smiles, Kochi'),
+  photo('waiting-area.jpg', 'Waiting area at United Smiles Family Dentistry'),
 ];
+const exterior = [
+  photo('clinic-front.jpg', 'Front of United Smiles Family Dentistry, High Court Road, Ernakulam'),
+  photo('entrance-path.jpg', 'Entrance path and United Smiles Dental Clinic sign, Ernakulam'),
+  photo('clinic-building.jpg', 'United Smiles clinic building and garden courtyard, Ernakulam'),
+  photo('courtyard.jpg', 'Courtyard and gate of United Smiles Dental Clinic, opposite the High Court of Kerala'),
+];
+const treatmentRoom = ['1629909613638-0e4a1fad8f81', '1629909613654-28e377c37b09', '1629909615184-74f495363b67', '1598256989800-fe5f95da9787', '1616391182219-e080b4d1043a'];
+const smiles = [1, 2, 3, 4, 5, 6, 7, 8].map(n => photo(`smile-${n}.jpg`, `Before and after dental treatment at United Smiles, Kochi (case ${n})`));
+// Home collage: big arch tile is stock; real clinic photos come next; the other stock photos go last.
+const gallery = [treatmentRoom[0], exterior[0], interior[0], interior[1], exterior[1], exterior[2], interior[2], exterior[3], ...treatmentRoom.slice(1)];
+const GALLERY_PAGE = `${import.meta.env.BASE_URL}gallery/`;
+const GALLERY_SECTIONS = [
+  { id: 'interior', label: 'Interior', title: <>Warm, calm <em>and welcoming.</em></>, list: interior },
+  { id: 'exterior', label: 'Exterior', title: <>Find us opposite <em>the High Court.</em></>, list: exterior },
+  { id: 'treatment-room', label: 'Treatment Room', title: <>Where the care <em>happens.</em></>, list: treatmentRoom },
+  { id: 'before-after', label: 'Before & After', title: <>Real smiles, <em>real results.</em></>, list: smiles },
+];
+const gSrc = (g, w) => typeof g === 'string' ? img(g, w) : g.src;
+const gAlt = g => typeof g === 'string' ? 'Dental treatment room' : g.alt;
 
 const reels = [
   { img: '1607613009820-a29f7bb81c04', caption: 'Brushing right, the easy way 🪥', views: '12.4K' },
@@ -286,16 +307,68 @@ function Gallery() {
       <Reveal><Eyebrow>Inside our clinic</Eyebrow><h2>A calm space, <em>made for you.</em></h2></Reveal>
     </div>
     <div className="collage">
-      {shown.map((id, i) => <Reveal key={id} delay={i * .05} className={`tile tile-${i}`}>
-        <img src={img(id, i === 0 ? 1100 : 700)} alt="Dental treatment room" loading="lazy" />
+      {shown.map((g, i) => <Reveal key={gSrc(g)} delay={i * .05} className={`tile tile-${i}`}>
+        <img src={gSrc(g, i === 0 ? 1100 : 700)} alt={gAlt(g)} loading="lazy" />
         {i === 4 && !more && <button className="tile-more glass" onClick={() => setMore(true)}><b>+{rest.length}</b>View more</button>}
       </Reveal>)}
     </div>
     <AnimatePresence>{more && <motion.div className="collage-more" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-      {rest.map(id => <div key={id} className="tile"><img src={img(id, 700)} alt="Dental treatment room" loading="lazy" /></div>)}
+      {rest.map(g => <div key={gSrc(g)} className="tile"><img src={gSrc(g, 700)} alt={gAlt(g)} loading="lazy" /></div>)}
     </motion.div>}</AnimatePresence>
-    {more && <div className="center"><button className="btn btn-glass glass" onClick={() => setMore(false)}>Show less</button></div>}
+    {more && <div className="center gallery-actions">
+      <button className="btn btn-glass glass" onClick={() => setMore(false)}>Show less</button>
+      <a className="btn btn-primary" href={GALLERY_PAGE}>View more <ArrowRight size={18} /></a>
+    </div>}
   </section>;
+}
+
+function Lightbox({ list, i, setI, close }) {
+  const go = d => setI((i + d + list.length) % list.length);
+  useEffect(() => {
+    const on = e => { if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); };
+    addEventListener('keydown', on);
+    document.body.style.overflow = 'hidden';
+    return () => { removeEventListener('keydown', on); document.body.style.overflow = ''; };
+  });
+  const g = list[i];
+  return <motion.div className="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" onClick={close} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <button className="lb-btn lb-close" onClick={close} aria-label="Close"><X size={24} /></button>
+    {list.length > 1 && <button className="lb-btn lb-prev" onClick={e => { e.stopPropagation(); go(-1); }} aria-label="Previous photo"><ChevronLeft size={28} /></button>}
+    <figure onClick={e => e.stopPropagation()}>
+      <img key={gSrc(g)} src={gSrc(g, 1600)} alt={gAlt(g)} />
+      <figcaption>{gAlt(g)} <span>{i + 1} / {list.length}</span></figcaption>
+    </figure>
+    {list.length > 1 && <button className="lb-btn lb-next" onClick={e => { e.stopPropagation(); go(1); }} aria-label="Next photo"><ChevronRight size={28} /></button>}
+  </motion.div>;
+}
+
+function GalleryPage() {
+  const [box, setBox] = useState(null);
+  return <>
+    <section className="page-hero section-pad" id="top">
+      <div className="blob blob-a" /><div className="blob blob-b" />
+      <nav className="crumbs" aria-label="Breadcrumb"><a href={HOME}>Home</a> / <span>Gallery</span></nav>
+      <Eyebrow>Gallery · United Smiles, Kochi</Eyebrow>
+      <h1>Inside our clinic, <em>and the smiles we’ve made.</em></h1>
+      <p className="lead">Photos of our clinic opposite the High Court of Kerala, Ernakulam, and before-and-after results from our patients.</p>
+      <div className="gal-chips">{GALLERY_SECTIONS.map((s, n) =>
+        <a key={s.id} className="glass" href={`#${s.id}`} onClick={e => { e.preventDefault(); scrollTo(s.id); }}><i>0{n + 1}</i>{s.label}<small>{s.list.length}</small></a>)}
+      </div>
+    </section>
+    {GALLERY_SECTIONS.map((s, n) => <section key={s.id} id={s.id} className={`gal-sec section-pad gal-${s.id}`}>
+      <Reveal className="gal-head"><span className="gal-num">0{n + 1}</span><div><Eyebrow>{s.label}</Eyebrow><h2>{s.title}</h2></div></Reveal>
+      <div className="gal-grid">{s.list.map((g, i) =>
+        <Reveal key={gSrc(g)} delay={(i % 3) * .06} className="gal-item">
+          <button onClick={() => setBox({ list: s.list, i })} aria-label={`Open photo: ${gAlt(g)}`}>
+            <img src={gSrc(g, 900)} alt={gAlt(g)} loading="lazy" />
+            {s.id === 'before-after' && <span className="gal-case">Case {String(i + 1).padStart(2, '0')}</span>}
+          </button>
+        </Reveal>)}
+      </div>
+      {s.id === 'before-after' && <p className="gal-note">Every smile is different, and results vary from person to person. Ask us what’s possible for yours.</p>}
+    </section>)}
+    <AnimatePresence>{box && <Lightbox list={box.list} i={box.i} setI={i => setBox({ ...box, i })} close={() => setBox(null)} />}</AnimatePresence>
+  </>;
 }
 
 // Live Google reviews via a Jotform website widget (configured in the Jotform dashboard).
@@ -474,15 +547,15 @@ function AboutHero() {
   </section>;
 }
 
-const isAboutPage = document.body.dataset.page === 'about';
+const page = document.body.dataset.page;
 
 function App() {
   // Sections render after load, so the browser's own jump to #section (from the other page) misses; redo it once mounted.
   useEffect(() => { if (location.hash) setTimeout(() => document.getElementById(location.hash.slice(1))?.scrollIntoView(), 300); }, []);
   return <div className="site">
     <Header />
-    {isAboutPage
-      ? <main><AboutHero /><About full /><MeetAnnie /><Doctors visitingOnly /><Treatments /><Reviews /><Contact /></main>
+    {page === 'about' ? <main><AboutHero /><About full /><MeetAnnie /><Doctors visitingOnly /><Treatments /><Reviews /><Contact /></main>
+      : page === 'gallery' ? <main><GalleryPage /><Contact /></main>
       : <main><Hero /><About /><Doctors /><Treatments /><Gallery /><Reviews /><InstaFeed /><Contact /></main>}
     <Footer />
     <QuickActions />
