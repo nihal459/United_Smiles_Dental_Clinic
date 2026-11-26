@@ -158,7 +158,12 @@ p{line-height:1.75;color:var(--muted)}
   .reviews-widget .jf-reviews-main{padding:0!important}
   .reviews-widget .jf-reviews-header-card{width:100%!important;max-width:none!important;padding:18px!important}
   .reviews-widget .jf-reviews-list{width:100%!important;max-width:none!important;padding:16px 16px 0!important}
-}
+  /* On a real iPhone 15 Jotform's script set a ~780px slider height (cards measure ~300px here).
+     Cap every height it controls; text is capped at 6 lines and "Read more" opens the full review in a pop-up. */
+  .reviews-widget .jf-reviews-card-text{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:6!important;overflow:hidden!important;max-height:10.5em!important}
+  .reviews-widget .jf-reviews-card,.reviews-widget .jf-reviews-slide,.reviews-widget .jf-google-reviews-rec-carousel-item,
+  .reviews-widget .jf-google-reviews-rec-slider,.reviews-widget .jf-google-reviews-rec-carousel{max-height:340px!important}
+  .reviews-widget .jf-google-reviews-rec-slider-container{max-height:364px!important}}
 /* the Jotform widget brings its own bottom padding, so trim the section gap after it (beats the mobile .section-pad rule too) */
 .reviews.section-pad{padding-bottom:16px}
 .reviews+.section-pad{padding-top:56px}
